@@ -154,4 +154,3 @@ class Sudoku:
             if len(self.get_row(i)) != 9 or len(self.get_column(i)) != 9 or len(self.get_block(i)) != 9:
                 return False
         return True
-

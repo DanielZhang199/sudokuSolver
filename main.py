@@ -6,6 +6,7 @@ date: 2022-08-14
 from Sudoku_puzzle import Sudoku
 from display import Display
 import pygame
+from time import perf_counter, sleep
 
 
 def find_block(x, y):
@@ -38,18 +39,11 @@ def find_block(x, y):
             return 8
 
 
-if __name__ == "__main__":
-    print("\nSudoku Solving Algorithm Visualizer with Pygame:")
-    print("""1. Enter puzzle by hovering over squares and press a number to fill in grid
-2. Press enter to start solving
-3. Solving time may range from instant to  the heat death of the universe depending on luck
-4. Updating the window slows the speed by a few orders of magnitude so press enter again to disable window updating
-    """)
-    from time import perf_counter, sleep
+def main():
 
     pygame.init()
     done = False
-    Window = Display(720, 30)
+    window = Display(720, 30)
 
     while not done:  # loop 1
         for event in pygame.event.get():
@@ -59,68 +53,68 @@ if __name__ == "__main__":
             elif event.type == pygame.KEYDOWN:
                 mouse = pygame.mouse.get_pos()
                 if event.key == pygame.K_1 or event.key == pygame.K_KP1:
-                    Window.edit_board(mouse[0], mouse[1], '1')
+                    window.edit_board(mouse[0], mouse[1], '1')
                 elif event.key == pygame.K_2 or event.key == pygame.K_KP2:
-                    Window.edit_board(mouse[0], mouse[1], '2')
+                    window.edit_board(mouse[0], mouse[1], '2')
                 elif event.key == pygame.K_3 or event.key == pygame.K_KP3:
-                    Window.edit_board(mouse[0], mouse[1], '3')
+                    window.edit_board(mouse[0], mouse[1], '3')
                 elif event.key == pygame.K_4 or event.key == pygame.K_KP4:
-                    Window.edit_board(mouse[0], mouse[1], '4')
+                    window.edit_board(mouse[0], mouse[1], '4')
                 elif event.key == pygame.K_5 or event.key == pygame.K_KP5:
-                    Window.edit_board(mouse[0], mouse[1], '5')
+                    window.edit_board(mouse[0], mouse[1], '5')
                 elif event.key == pygame.K_6 or event.key == pygame.K_KP6:
-                    Window.edit_board(mouse[0], mouse[1], '6')
+                    window.edit_board(mouse[0], mouse[1], '6')
                 elif event.key == pygame.K_7 or event.key == pygame.K_KP7:
-                    Window.edit_board(mouse[0], mouse[1], '7')
+                    window.edit_board(mouse[0], mouse[1], '7')
                 elif event.key == pygame.K_8 or event.key == pygame.K_KP8:
-                    Window.edit_board(mouse[0], mouse[1], '8')
+                    window.edit_board(mouse[0], mouse[1], '8')
                 elif event.key == pygame.K_9 or event.key == pygame.K_KP9:
-                    Window.edit_board(mouse[0], mouse[1], '9')
+                    window.edit_board(mouse[0], mouse[1], '9')
                 elif event.key == pygame.K_0 or event.key == pygame.K_BACKSPACE or event.key == pygame.K_KP0:
-                    Window.edit_board(mouse[0], mouse[1], '0')
+                    window.edit_board(mouse[0], mouse[1], '0')
                 elif event.key == pygame.K_RETURN:
                     done = True
-        Window.update()
+        window.update()
 
-    Puzzle = Sudoku(Window.get_board())
-    Blanks = Puzzle.get_blanks()
-    CurrentIdx = 0
-    TOTAL = len(Blanks) - 1
+    puzzle = Sudoku(window.get_board())
+    blanks = puzzle.get_blanks()
+    current_idx = 0
+    total = len(blanks) - 1
     update_screen = True
     print("Inputted Board:")
-    Puzzle.see_board()
+    puzzle.see_board()
     print()
 
     start = perf_counter()  # start solving
-    while CurrentIdx <= TOTAL:
-        pos = Blanks[CurrentIdx]
-        row = Puzzle.get_row(pos[1])  # y value
-        column = Puzzle.get_column(pos[0])  # x value
-        block = Puzzle.get_block(find_block(pos[0], pos[1]))
+    while current_idx <= total:
+        pos = blanks[current_idx]
+        row = puzzle.get_row(pos[1])  # y value
+        column = puzzle.get_column(pos[0])  # x value
+        block = puzzle.get_block(find_block(pos[0], pos[1]))
         combined = set().union(*[row, column, block])  # union of three sets
-        Values = [i for i in '123456789' if i not in combined]
-        if Values:
-            CurrentIdx += 1
-            Puzzle.set_square(pos[0], pos[1], Values)
+        values = [i for i in '123456789' if i not in combined]
+        if values:
+            current_idx += 1
+            puzzle.set_square(pos[0], pos[1], values)
             if update_screen:
-                Window.edit_board(pos[0], pos[1], Values[0], False)
+                window.edit_board(pos[0], pos[1], values[0], False)
         else:
-            Done = False
-            while not Done:
-                CurrentIdx -= 1
-                pos = Blanks[CurrentIdx]
-                square = Puzzle.get_square(pos[0], pos[1])
+            done = False
+            while not done:
+                current_idx -= 1
+                pos = blanks[current_idx]
+                square = puzzle.get_square(pos[0], pos[1])
                 del square[0]
                 if square:
-                    Puzzle.set_square(pos[0], pos[1], square)
+                    puzzle.set_square(pos[0], pos[1], square)
                     if update_screen:
-                        Window.edit_board(pos[0], pos[1], square[0], False)
-                    CurrentIdx += 1
-                    Done = True
+                        window.edit_board(pos[0], pos[1], square[0], False)
+                    current_idx += 1
+                    done = True
                 else:
-                    Puzzle.set_square(pos[0], pos[1], '0')
+                    puzzle.set_square(pos[0], pos[1], '0')
                     if update_screen:
-                        Window.edit_board(pos[0], pos[1], '0', False)
+                        window.edit_board(pos[0], pos[1], '0', False)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -131,29 +125,46 @@ if __name__ == "__main__":
                 else:
                     for y in range(9):
                         for x in range(9):
-                            Window.edit_board(x, y, Puzzle.get_square(x, y)[0], False)
-                            Window.update(False)
+                            window.edit_board(x, y, puzzle.get_square(x, y)[0], False)
+                            window.update(False)
                     update_screen = True
         if update_screen:
-            Window.update(False)  # window doesnt update at fps, but asap
+            window.update(False)  # window doesnt update at fps, but asap
 
     end = perf_counter()
 
     if not update_screen:
         for y in range(9):
             for x in range(9):
-                Window.edit_board(x, y, Puzzle.get_square(x, y)[0], False)
-                Window.update()
+                window.edit_board(x, y, puzzle.get_square(x, y)[0], False)
+                window.update()
 
-    if Puzzle.is_solved():
-        print(f"Puzzle Solved ({round(end-start, 4)} seconds)")
-        Puzzle.see_board()
+    if puzzle.is_solved():
+        print(f"Puzzle Solved ({round(end - start, 4)} seconds)")
+        puzzle.see_board()
     else:
         print("Puzzle Not Solved (either code is bugged or sudoku is invalid)")
 
-    while True:  # keep window open until closed
+    print("Exit window to end or press any key to run program again")
+    wait = True
+    while wait:  # keep window open until closed
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
+            elif event.type == pygame.KEYDOWN:
+                pygame.quit()
+                wait = False
         sleep(0.1)
+
+
+if __name__ == "__main__":
+    print("\nSudoku Solving Algorithm Visualizer with Pygame:")
+    print("""1. Enter puzzle by hovering over squares and press a number to fill in grid
+    2. Press enter to start solving
+    3. Solving time may range from instant to  the heat death of the universe depending on luck
+    4. Updating the window slows the speed by a few orders of magnitude so press enter again to disable window updating
+        """)
+    while True:
+        main()
+        

@@ -37,7 +37,7 @@ class Display:
         self.__BACKGROUND = pygame.Surface(self.__DIMENSIONS, pygame.SRCALPHA, 32)
         self.__BGCOLOUR = (230, 230, 230)
         self.__BACKGROUND.fill(self.__BGCOLOUR)
-        self.__BOARD = [list('000000000') for i in range(9)]
+        self.__BOARD = [list('000000000') for _ in range(9)]
         pygame.font.init()
         self.__FONT = pygame.font.SysFont('franklingothicmedium', 70)
 
