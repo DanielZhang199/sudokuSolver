@@ -1,7 +1,9 @@
 """
-main program code for sudoku solver
-with realtime pygame display because who cares about speed
+deterministic backtracking sudoku solver with realtime pygame display because who cares about speed
 date: 2022-08-14
+todo:
+- have a proper loop so that the window doesnt need to reboot when restarting
+- buttons instead of key presses
 """
 from Sudoku_puzzle import Sudoku
 from display import Display
@@ -43,7 +45,7 @@ def main():
 
     pygame.init()
     done = False
-    window = Display(720, 30)
+    window = Display(720, 30, "Sudoku Solver")
 
     while not done:  # loop 1
         for event in pygame.event.get():
@@ -125,8 +127,9 @@ def main():
                 else:
                     for y in range(9):
                         for x in range(9):
-                            window.edit_board(x, y, puzzle.get_square(x, y)[0], False)
-                            window.update(False)
+                            if type(puzzle.get_square(x, y)) is list:
+                                window.edit_board(x, y, puzzle.get_square(x, y)[0], False)
+                                window.update(False)
                     update_screen = True
         if update_screen:
             window.update(False)  # window doesnt update at fps, but asap
@@ -136,8 +139,9 @@ def main():
     if not update_screen:
         for y in range(9):
             for x in range(9):
-                window.edit_board(x, y, puzzle.get_square(x, y)[0], False)
-                window.update()
+                if type(puzzle.get_square(x, y)) is list:
+                    window.edit_board(x, y, puzzle.get_square(x, y)[0], False)
+                    window.update(False)
 
     if puzzle.is_solved():
         print(f"Puzzle Solved ({round(end - start, 4)} seconds)")
@@ -152,18 +156,19 @@ def main():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
-            elif event.type == pygame.KEYDOWN:
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                 pygame.quit()
                 wait = False
-        sleep(0.1)
+        sleep(0.1)  # no reason to update screen
 
 
 if __name__ == "__main__":
     print("\nSudoku Solving Algorithm Visualizer with Pygame:")
-    print("""1. Enter puzzle by hovering over squares and press a number to fill in grid
+    print("""   1. Enter puzzle by hovering over squares and press a number to fill in grid
     2. Press enter to start solving
-    3. Solving time may range from instant to  the heat death of the universe depending on luck
-    4. Updating the window slows the speed by a few orders of magnitude so press enter again to disable window updating
+    3. Solving time may range significantly (as with all brute force searches), but is non-random
+    4. Updating the window slows the speed by a few orders of magnitude; press enter if you only want to find solution
+    5. Press enter to restart program
         """)
     while True:
         main()
