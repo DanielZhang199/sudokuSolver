@@ -12,7 +12,6 @@ class Display:
         BOARD: (list) of (tuple): (character (str), colour (tuple))
         WIDTH: (int)
         HEIGHT: (int)
-        FPS: (int)
         DIMENSIONS: (tuple)
         CLOCK: (pygame.time.Clock)
         SCREEN: (pygame.Surface)
@@ -30,13 +29,11 @@ class Display:
         get_board(): (string)
     """
 
-    def __init__(self, size, fps, caption):
+    def __init__(self, size, caption):
         """
         :param size: (int) pixel size of sudoku board
-        :param fps: (int)
         :param caption: (str)
         """
-        self.__FPS = fps
         self.__WIDTH = size
         self.__HEIGHT = size
         self.__DIMENSIONS = (self.__WIDTH, self.__HEIGHT)
@@ -52,12 +49,12 @@ class Display:
 
     # --- MODIFIERS --- #
 
-    def update(self, restrict=True):
+    def update(self, fps=0):
         """
         Updates the entire screen
         to be honest, due to the number of updates needed and the requirement to go asap,
         this code should be optimized quite a bit to not update the entire screen
-        :param restrict: (bool) whether the fps should be unlimited
+        :param fps: (int) refresh rate; 0 is unlimited
         :return:
         """
         self.__SCREEN.blit(self.__BACKGROUND, (0, 0))  # clears screen
@@ -87,8 +84,8 @@ class Display:
 
         self.__SCREEN.blit(fps_text, (10, 0))
 
-        if restrict:  # during solving we don't want fps <= 30
-            self.__CLOCK.tick(self.__FPS)
+        if fps != 0:  # during solving we don't want fps <= 30
+            self.__CLOCK.tick(fps)
         else:
             self.__CLOCK.tick()
         pygame.display.flip()  # updates screen

@@ -45,7 +45,7 @@ def main():
 
     pygame.init()
     done = False
-    window = Display(720, 30, "Sudoku Solver")
+    window = Display(720, "Sudoku Solver")
 
     while not done:  # loop 1
         for event in pygame.event.get():
@@ -76,7 +76,7 @@ def main():
                     window.edit_board(mouse[0], mouse[1], '0')
                 elif event.key == pygame.K_RETURN:
                     done = True
-        window.update()
+        window.update(30)
 
     puzzle = Sudoku(window.get_board())
     blanks = puzzle.get_blanks()
@@ -129,10 +129,10 @@ def main():
                         for x in range(9):
                             if type(puzzle.get_square(x, y)) is list:
                                 window.edit_board(x, y, puzzle.get_square(x, y)[0], False)
-                                window.update(False)
+                                window.update(0)
                     update_screen = True
         if update_screen:
-            window.update(False)  # window doesnt update at fps, but asap
+            window.update(0)  # window doesnt update at fps, but asap
 
     end = perf_counter()
 
@@ -141,7 +141,7 @@ def main():
             for x in range(9):
                 if type(puzzle.get_square(x, y)) is list:
                     window.edit_board(x, y, puzzle.get_square(x, y)[0], False)
-                    window.update(False)
+                    window.update(0)
 
     if puzzle.is_solved():
         print(f"Puzzle Solved ({round(end - start, 4)} seconds)")
@@ -152,6 +152,7 @@ def main():
     print("Exit window to end or press any key to run program again")
     wait = True
     while wait:  # keep window open until closed
+        window.update(10)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -159,7 +160,6 @@ def main():
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                 pygame.quit()
                 wait = False
-        sleep(0.1)  # no reason to update screen
 
 
 if __name__ == "__main__":
