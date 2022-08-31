@@ -75,33 +75,64 @@ class Sudoku:
         """
         return self.__blanks
 
-    def get_row(self, num):
+    def get_row(self, x):
         """
-        :param num: (int) [0-8]
+        gets all the different values present in a row
+        :param x: (int) [0-8]
         :return: (set)
         """
-        output = list(self.__board[num])
+        output = list(self.__board[x])
         for idx, val in enumerate(output):
             if type(val) is list:
                 output[idx] = val[0]
-        return {i for i in output if i != '0'}
+        return {i for i in output if i != '0'}  # get rid of repeats and zeros
 
-    def get_column(self, num):
+    def get_column(self, y):
         """
-        :param num: (int) [0-8]
+        :param y: (int) [0-8]
         :return: (set)
         """
         output = []
         for i in range(9):
-            output.append(self.__board[i][num])
+            output.append(self.__board[i][y])
 
         for idx, val in enumerate(output):
             if type(val) is list:
                 output[idx] = val[0]
         return {i for i in output if i != '0'}
 
-    def get_block(self, num):
+    def get_block(self, x, y):
         """
+        uses x and y values to find which block the coordinates are in
+        then calls method to return all elements in the block
+        :param x, y: (int) [0-8]
+        :return: (set)
+        """
+        if y < 3:
+            if x < 3:
+                return self.get_block_from_number(0)
+            elif x < 6:
+                return self.get_block_from_number(1)
+            else:
+                return self.get_block_from_number(2)
+        elif y < 6:
+            if x < 3:
+                return self.get_block_from_number(3)
+            elif x < 6:
+                return self.get_block_from_number(4)
+            else:
+                return self.get_block_from_number(5)
+        else:
+            if x < 3:
+                return self.get_block_from_number(6)
+            elif x < 6:
+                return self.get_block_from_number(7)
+            else:
+                return self.get_block_from_number(8)
+
+    def get_block_from_number(self, num):
+        """
+        adds values from a given block number to a set
         :param num: (int) [0-8]
         :return: (set)
         """
@@ -151,6 +182,6 @@ class Sudoku:
 
     def is_solved(self):
         for i in range(9):
-            if len(self.get_row(i)) != 9 or len(self.get_column(i)) != 9 or len(self.get_block(i)) != 9:
+            if len(self.get_row(i)) != 9 or len(self.get_column(i)) != 9 or len(self.get_block_from_number(i)) != 9:
                 return False
         return True

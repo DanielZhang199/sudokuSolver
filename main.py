@@ -4,41 +4,12 @@ date: 2022-08-14
 todo:
 - have a proper loop so that the window doesnt need to reboot when restarting
 - buttons instead of key presses
+- make code that finds blocks more readable
 """
 from Sudoku_puzzle import Sudoku
 from display import Display
 import pygame
-from time import perf_counter, sleep
-
-
-def find_block(x, y):
-    """
-    finds the sudoku block a xy value is in
-    :param x: (int) [0-8]
-    :param y: (int) [0-8]
-    :return: (int) [0-8]
-    """
-    if y < 3:
-        if x < 3:
-            return 0
-        elif x < 6:
-            return 1
-        else:
-            return 2
-    elif y < 6:
-        if x < 3:
-            return 3
-        elif x < 6:
-            return 4
-        else:
-            return 5
-    else:
-        if x < 3:
-            return 6
-        elif x < 6:
-            return 7
-        else:
-            return 8
+from time import perf_counter
 
 
 def main():
@@ -92,7 +63,7 @@ def main():
         pos = blanks[current_idx]
         row = puzzle.get_row(pos[1])  # y value
         column = puzzle.get_column(pos[0])  # x value
-        block = puzzle.get_block(find_block(pos[0], pos[1]))
+        block = puzzle.get_block(pos[0], pos[1])
         combined = set().union(*[row, column, block])  # union of three sets
         values = [i for i in '123456789' if i not in combined]
         if values:
